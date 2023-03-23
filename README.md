@@ -4,6 +4,11 @@ docker-compose up
 ```
 
 ## Database setup
+#### Connect to the database
+```shell
+mysql --host=0.0.0.0 --user=debezium --password=dbz
+```
+
 ```sql
 GRANT ALL PRIVILEGES ON *.* TO 'debezium'@'%';
 
