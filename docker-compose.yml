@@ -1,0 +1,68 @@
+version: '3.7'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mypassword
+      MYSQL_DATABASE: test_db
+      MYSQL_USER: debezium
+      MYSQL_PASSWORD: dbz
+    command:
+      - --server-id=1
+      - --log-bin=mysql-bin
+      - --binlog-format=row
+      - --binlog-row-image=full
+      - --enforce-gtid-consistency=ON
+      - --gtid-mode=ON
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  zookeeper:
+    image: debezium/zookeeper:2.1
+    container_name: zookeeper
+    ports:
+     - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: debezium/kafka:2.1
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    links:
+      - zookeeper
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  debezium-connector:
+    image: debezium/connect:2.1
+    container_name: debezium-connector
+    ports:
+     - 8083:8083
+    depends_on:
+      - kafka
+      - mysql
+    links:
+     - kafka
+     - mysql
+    environment:
+     - BOOTSTRAP_SERVERS=kafka:9092
+     - GROUP_ID=1
+     - CONFIG_STORAGE_TOPIC=my_connect_configs
+     - OFFSET_STORAGE_TOPIC=my_connect_offsets
+     - STATUS_STORAGE_TOPIC=my_connect_statuses
+
+volumes:
+  mysql-data:
