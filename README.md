@@ -26,7 +26,7 @@ CREATE TABLE users (
 curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" http://localhost:8083/connectors/ -d @debezium-connector-config/mysql-connector.json
 ```
 
-#### Remove a connecton
+#### Remove a connector
 ```shell
 curl -X DELETE http://localhost:8083/connectors/mysql-connector
 ```
