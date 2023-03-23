@@ -17,8 +17,13 @@ services:
       - --binlog-row-image=full
       - --enforce-gtid-consistency=ON
       - --gtid-mode=ON
+      # - --max-connections=5
     volumes:
       - mysql-data:/var/lib/mysql
+    # mem_limit: 384m
+    # mem_reservation: 32m
+    ports:
+      - 3306:3306
 
   zookeeper:
     image: debezium/zookeeper:2.1
