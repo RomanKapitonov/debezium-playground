@@ -44,8 +44,7 @@ docker-compose exec kafka /kafka/bin/kafka-configs.sh --bootstrap-server kafka:9
 ## Push data to stream
 
 ```sql
-INSERT INTO users (name, email)
-VALUES (CONCAT('User', ROUND(RAND() * 100)), CONCAT('user', ROUND(RAND() * 100), '@example.com'));
+INSERT INTO users (name, email) VALUES (CONCAT('User', ROUND(RAND() * 100)), CONCAT('user', ROUND(RAND() * 100), '@example.com'));
 ```
 
 ## Observe the failed worker status
